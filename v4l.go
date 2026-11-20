@@ -47,6 +47,16 @@ const (
 	v4l_memoryMmap = 1
 )
 
+// Buffer flags.
+const (
+	v4l_bufFlagError = 0x0040
+
+	v4l_bufFlagTimestampUnknown   = 0x0000
+	v4l_bufFlagTimestampMonotonic = 0x2000
+	v4l_bufFlagTimestampCopy      = 0x4000
+	v4l_bufFlagTimestampMask      = 0xe000
+)
+
 const (
 	v4l_frmsizeTypeDiscrete   = 1
 	v4l_frmsizeTypeContinuous = 2
@@ -134,11 +144,17 @@ type v4l_buffer struct {
 	bytesused uint32
 	flags     uint32
 	field     uint32
+	timestamp v4l_timeval
 	timecode  v4l_timecode
 	sequence  uint32
 	memory    uint32
 	offset    uint32
 	length    uint32
+}
+
+type v4l_timeval struct {
+	sec  int64
+	usec int64
 }
 
 type v4l_int int32
@@ -479,6 +495,7 @@ func (p *v4l_buffer) get(q unsafe.Pointer) {
 	p.bytesused = getUint32(q, offs_buffer_bytesused)
 	p.flags = getUint32(q, offs_buffer_flags)
 	p.field = getUint32(q, offs_buffer_field)
+	p.timestamp.get(unsafe.Pointer(uintptr(q) + offs_buffer_timestamp))
 	p.timecode.get(unsafe.Pointer(uintptr(q) + offs_buffer_timecode))
 	p.sequence = getUint32(q, offs_buffer_sequence)
 	p.memory = getUint32(q, offs_buffer_memory)
@@ -492,6 +509,7 @@ func (p *v4l_buffer) put(q unsafe.Pointer) {
 	putUint32(q, offs_buffer_bytesused, p.bytesused)
 	putUint32(q, offs_buffer_flags, p.flags)
 	putUint32(q, offs_buffer_field, p.field)
+	p.timestamp.put(unsafe.Pointer(uintptr(q) + offs_buffer_timestamp))
 	p.timecode.put(unsafe.Pointer(uintptr(q) + offs_buffer_timecode))
 	putUint32(q, offs_buffer_sequence, p.sequence)
 	putUint32(q, offs_buffer_memory, p.memory)
@@ -513,6 +531,16 @@ func (p *v4l_int) put(q unsafe.Pointer) {
 
 func (p *v4l_int) size() int {
 	return size_int
+}
+
+func (p *v4l_timeval) get(q unsafe.Pointer) {
+	p.sec = getLong(q, 0)
+	p.usec = getLong(q, size_long)
+}
+
+func (p *v4l_timeval) put(q unsafe.Pointer) {
+	putLong(q, 0, p.sec)
+	putLong(q, size_long, p.usec)
 }
 
 func (p *v4l_cropcap) get(q unsafe.Pointer) {
@@ -834,6 +862,30 @@ func getUint8(base unsafe.Pointer, offset int) uint8 {
 func putUint8(base unsafe.Pointer, offset int, value uint8) {
 	ptr := (*uint8)(unsafe.Pointer(uintptr(base) + uintptr(offset)))
 	*ptr = value
+}
+
+func getLong(base unsafe.Pointer, offset int) int64 {
+	p := unsafe.Pointer(uintptr(base) + uintptr(offset))
+	switch size_long {
+	case 4:
+		return int64(*(*int32)(p))
+	case 8:
+		return *(*int64)(p)
+	default:
+		panic("bad long size")
+	}
+}
+
+func putLong(base unsafe.Pointer, offset int, value int64) {
+	p := unsafe.Pointer(uintptr(base) + uintptr(offset))
+	switch size_long {
+	case 4:
+		*(*int32)(p) = int32(value)
+	case 8:
+		*(*int64)(p) = value
+	default:
+		panic("bad long size")
+	}
 }
 
 func getInt(base unsafe.Pointer, offset int) int64 {

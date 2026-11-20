@@ -39,4 +39,8 @@ const (
 	// ErrBufferGone is returned by methods of Buffer when the contents of the
 	// buffer is no longer available.
 	ErrBufferGone = Error("buffer contents not available")
+
+	// ErrStreamClosed is returned by Stream.Next when the stream has been
+	// closed and no queued frames remain.
+	ErrStreamClosed = Error("stream closed")
 )

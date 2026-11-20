@@ -66,6 +66,7 @@ int main() {
 	printf("\tsize_requestbuffers = %llu\n", (long long unsigned) sizeof(struct v4l2_requestbuffers));
 	printf("\tsize_buffer         = %llu\n", (long long unsigned) sizeof(struct v4l2_buffer));
 	printf("\tsize_int            = %llu\n", (long long unsigned) sizeof(int));
+	printf("\tsize_long           = %llu\n", (long long unsigned) sizeof(long));
 	printf("\tsize_cropcap        = %llu\n", (long long unsigned) sizeof(struct v4l2_cropcap));
 	printf("\tsize_crop           = %llu\n", (long long unsigned) sizeof(struct v4l2_crop));
 	printf("\tsize_standard       = %llu\n", (long long unsigned) sizeof(struct v4l2_standard));
@@ -134,6 +135,7 @@ int main() {
 	printf("\toffs_buffer_bytesused = %llu\n", (long long unsigned) offsetof(struct v4l2_buffer, bytesused));
 	printf("\toffs_buffer_flags     = %llu\n", (long long unsigned) offsetof(struct v4l2_buffer, flags));
 	printf("\toffs_buffer_field     = %llu\n", (long long unsigned) offsetof(struct v4l2_buffer, field));
+	printf("\toffs_buffer_timestamp = %llu\n", (long long unsigned) offsetof(struct v4l2_buffer, timestamp));
 	printf("\toffs_buffer_timecode  = %llu\n", (long long unsigned) offsetof(struct v4l2_buffer, timecode));
 	printf("\toffs_buffer_sequence  = %llu\n", (long long unsigned) offsetof(struct v4l2_buffer, sequence));
 	printf("\toffs_buffer_memory    = %llu\n", (long long unsigned) offsetof(struct v4l2_buffer, memory));

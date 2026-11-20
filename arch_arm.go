@@ -40,6 +40,7 @@ const (
 	size_requestbuffers = 20
 	size_buffer         = 68
 	size_int            = 4
+	size_long           = 4
 	size_cropcap        = 44
 	size_crop           = 20
 	size_standard       = 72
@@ -108,6 +109,7 @@ const (
 	offs_buffer_bytesused = 8
 	offs_buffer_flags     = 12
 	offs_buffer_field     = 16
+	offs_buffer_timestamp = 20
 	offs_buffer_timecode  = 28
 	offs_buffer_sequence  = 44
 	offs_buffer_memory    = 48
